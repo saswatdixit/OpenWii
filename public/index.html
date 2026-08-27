@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenWii</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; cursor: none;
+    background: #e4eaf1; color: #33404f;
+    font: 500 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+  }
+  canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+
+
+  /* ── Calibration ─────────────────────────────────────────────────────── */
+  #cal {
+    position: absolute; inset: 0; z-index: 15; display: grid; place-items: center;
+    background: rgba(240, 244, 249, 0.93); text-align: center; padding: 0 8vw;
+  }
+  #cal.hide { display: none; }
+  #cal h2 { font-size: clamp(26px, 3.6vw, 44px); margin: 0 0 10px; letter-spacing: -0.03em; }
+  #cal p { color: #64758a; margin: 0 auto; max-width: 520px; }
+
+  /* ── Chrome ──────────────────────────────────────────────────────────── */
+  #link {
+    position: absolute; right: 22px; top: 20px; display: flex; align-items: center; gap: 9px;
+    font-size: 12px; color: #6b7b8f; background: #ffffffcc; border: 1px solid #c9d4e0;
+    padding: 8px 13px; border-radius: 999px; z-index: 10;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #b6c2d0; }
+  .dot.on { background: #35d07f; }
+
+
+  #keys {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    font-size: 11px; color: #8494a7; z-index: 10; letter-spacing: .02em;
+    white-space: nowrap;
+  }
+  #speed {
+    position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%);
+    font-size: 14px; font-weight: 600; color: #4a5c72; z-index: 11;
+    background: #ffffffe6; border: 1px solid #c9d4e0; border-radius: 999px;
+    padding: 7px 16px; opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  #speed.on { opacity: 1; }
+  #debug {
+    position: absolute; right: 22px; bottom: 22px; margin: 0; display: none; z-index: 10;
+    background: #ffffffe6; border: 1px solid #c9d4e0; border-radius: 10px; padding: 12px 14px;
+    font: 11px/1.6 ui-monospace, Menlo, monospace; color: #5c6e83; white-space: pre;
+  }
+  #debug.on { display: block; }
+
+  /* ── Launch banner: grows from the pressed tile to full screen ───────── */
+  #launch {
+    position: fixed; z-index: 30; border-radius: 18px; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2vmin; box-shadow: 0 20px 60px #33507044;
+    transition: left .55s cubic-bezier(.3,.85,.3,1), top .55s cubic-bezier(.3,.85,.3,1),
+      width .55s cubic-bezier(.3,.85,.3,1), height .55s cubic-bezier(.3,.85,.3,1),
+      border-radius .55s ease;
+  }
+  #launch.full { left: 0 !important; top: 0 !important;
+    width: 100vw !important; height: 100vh !important; border-radius: 0; }
+  #launch .l-emoji { font-size: 17vmin; filter: drop-shadow(0 1.2vmin 2.5vmin rgba(0,0,0,.3)); }
+  #launch .l-title { font-size: 5vmin; font-weight: 700; color: #fff;
+    text-shadow: 0 .3vmin 1.2vmin rgba(0,0,0,.45); }
+
+  /* Narrow windows: the pairing card shrinks and the desk-keyboard hint goes —
+     it collides with the bar, and on a window that shape you're pairing a
+     phone, not testing with a keyboard. */
+  @media (max-width: 720px) {
+    #keys { display: none; }
+    #pair { gap: 9px; padding: 8px 11px 8px 8px; }
+    #pair img { width: 46px; height: 46px; }
+    #pair-url { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div id="cal" class="hide">
+  <div>
+    <h2 id="cal-title">Waiting for the remote</h2>
+    <p id="cal-body">Open the controller page on your phone and tap Enable motion sensors.</p>
+  </div>
+</div>
+
+
+<div id="link"><span class="dot" id="dot"></span><span id="link-t">no remote connected</span></div>
+
+<div id="keys">Point with your phone · <b>A</b> selects · <b>B</b> back · <b>←→</b> pointer speed · <b>C</b> re-centre · D debug</div>
+<div id="speed"></div>
+<pre id="debug"></pre>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="menu.js"></script>
+</body>
+</html>

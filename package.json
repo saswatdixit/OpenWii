@@ -1,0 +1,30 @@
+{
+  "name": "openwii",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Motion-controlled games for your computer — your phone is the remote.",
+  "license": "MIT",
+  "author": "Patrick Sun",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pattssun/OpenWii.git"
+  },
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "tv": "open -na 'Google Chrome' --args --user-data-dir=$HOME/.openwii-chrome --no-first-run --no-default-browser-check --autoplay-policy=no-user-gesture-required --new-window https://localhost:8443/",
+    "dev": "node --watch server.js",
+    "cert": "node scripts/gen-cert.js",
+    "test": "node --test \"core/**/*.test.mjs\" \"games/**/*.test.mjs\""
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1",
+    "three": "^0.185.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
