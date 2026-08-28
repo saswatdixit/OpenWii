@@ -1,6 +1,6 @@
 # 🕹 OpenWii
 
-Play the Wii with your phone...
+Play the Wii with your phone.
 
 A browser tab on your computer shows a Wii menu. Scan the QR code on screen and
 your phone becomes the remote: swing it and a hand cursor sweeps across the
